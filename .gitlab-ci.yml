@@ -23,3 +23,4 @@ deploy:
       one-image --repo https://helm.sikalabs.io
       --set image=$IMAGE
       --set host=animato-js-$CI_COMMIT_REF_SLUG.k8s.sikademo.com
+    - slu wait-for tls -a animato-js-$CI_COMMIT_REF_SLUG.k8s.sikademo.com:443
