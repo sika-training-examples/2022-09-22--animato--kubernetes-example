@@ -17,7 +17,8 @@ build:
 deploy:
   stage: deploy
   script:
-    - training-cli kubernetes connect
+    - mkdir -p ~/.kube
+    - cp $KUBECONFIG ~/.kube/config
     - helm install animato-js-$CI_COMMIT_REF_SLUG
       one-image --repo https://helm.sikalabs.io
       --set image=$IMAGE
