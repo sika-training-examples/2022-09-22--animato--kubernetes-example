@@ -1,0 +1,24 @@
+image: sikalabs/dev
+
+stages:
+  - build
+  - deploy
+
+variables:
+  IMAGE: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG-$CI_COMMIT_SHORT_SHA-$CI_PIPELINE_ID
+
+build:
+  stage: build
+  script:
+    - docker login $CI_REGISTRY -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD
+    - docker build -t $IMAGE .
+    - docker push $IMAGE
+
+deploy:
+  stage: deploy
+  script:
+    - training-cli kubernetes connect
+    - helm install animato-js-$CI_COMMIT_REF_SLUG
+      one-image --repo https://helm.sikalabs.io
+      --set image=$IMAGE
+      --set host=animato-js-$CI_COMMIT_REF_SLUG.k8s.sikademo.com
